@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JULIABIN="julia"
+JULIABIN="$HOME/Applications/Julia-1.3.app/Contents/Resources/julia/bin/julia"
 DEBUG="false"
 
 while [[ $# -gt 0 ]]
@@ -23,8 +23,8 @@ while [[ $# -gt 0 ]]
     shift
 done
 
-$JULIABIN --startup-file=no --history-file=no -e \
-    "using LanguageServer; import SymbolServer; server = LanguageServer.LanguageServerInstance(stdin, stdout, $DEBUG); server.runlinter = true; run(server);" \
+$JULIABIN --project --startup-file=no --history-file=no -e \
+    "using LanguageServer; using Pkg; server = LanguageServer.LanguageServerInstance(stdin, stdout, $DEBUG, dirname(Pkg.Types.Context().env.project_file)); server.runlinter = true; run(server);" \
     <&0 >&1 &
 
 PID=$!
